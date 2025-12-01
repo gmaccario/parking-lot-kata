@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+use App\Command\ParkingStatusCommand;
+use App\Command\SmartParkingSystemCommand;
+use App\Domain\Entity\ParkingGarage;
+use Symfony\Component\Console\Application;
+
+// Autoload Composer
+require \dirname(__DIR__) . '/vendor/autoload.php';
+
+$application = new Application('Parking Lot CLI', '0.1.0');
+
+// Register the commands
+$application->add(new ParkingStatusCommand(new ParkingGarage()));
+$application->add(new SmartParkingSystemCommand());
+
+// run the application
+try {
+    $application->run();
+} catch (Exception $e) {
+
+}
