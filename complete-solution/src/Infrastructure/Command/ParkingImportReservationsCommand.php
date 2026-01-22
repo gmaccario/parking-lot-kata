@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Application\Command;
+namespace App\Infrastructure\Command;
 
-use App\Application\UseCase\ImportReservationsUseCase;
 use App\Application\Parser\ParserFactoryInterface;
+use App\Application\UseCase\ImportReservationsUseCase;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -39,6 +39,7 @@ class ParkingImportReservationsCommand extends Command
             $parser = $this->parserFactory->createFromFile($path);
         } catch (\InvalidArgumentException $e) {
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+
             return Command::FAILURE;
         }
 

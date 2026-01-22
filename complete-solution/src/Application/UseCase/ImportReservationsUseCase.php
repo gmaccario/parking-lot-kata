@@ -7,8 +7,9 @@ use App\Application\Parser\ParserInterface;
 readonly class ImportReservationsUseCase
 {
     public function __construct(
-        private ParserInterface $parser
-    ) {}
+        private ParserInterface $parser,
+    ) {
+    }
 
     public function execute(string $input): void
     {

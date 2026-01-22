@@ -14,14 +14,15 @@
 
 Questo repository accompagna la mia serie completa di tutorial su YouTube:
 
-| Episodio | Argomento                                                        | Video |
-|----------|------------------------------------------------------------------|-------|
-| 01 | Introduzione & Clean Code Basics                                 | [Guarda](https://youtu.be/2vNkzn3NmtQ) |
-| 02 | Unit Test, Refactoring, Quality Tools                            | [Guarda](https://youtu.be/oPCxWAiHyxg) |
-| 03 | Integrazione Symfony Console                                     | [Guarda](https://youtu.be/uqCo_pUl9Dg) |
-| 04 | Dependency Injection in PHP Puro                                 | [Guarda](https://youtu.be/ZNI3K5WfNPo) |
-| 05 | Strategy Pattern: Refactoring da If-Else a Design Pattern Clean  | [Guarda](https://youtu.be/msoG82vf_1k) |
-| 06 | Hexagonal Architecture e Factory Pattern                         | [Guarda](https://youtu.be/uhfUYHX0iN8) |
+| Episodio | Argomento                                                   | Video |
+|----------|-------------------------------------------------------------|-|
+| 01       | Introduzione & Clean Code Basics                            | [Guarda](https://youtu.be/2vNkzn3NmtQ) |
+| 02       | Unit Test, Refactoring, Quality Tools                       | [Guarda](https://youtu.be/oPCxWAiHyxg) |
+| 03       | Integrazione Symfony Console                                | [Guarda](https://youtu.be/uqCo_pUl9Dg) |
+| 04       | Dependency Injection in PHP Puro                            | [Guarda](https://youtu.be/ZNI3K5WfNPo) |
+| 05       | Strategy Pattern: Refactoring da If-Else a Design Pattern Clean | [Guarda](https://youtu.be/msoG82vf_1k) |
+| 06       | Hexagonal Architecture e Factory Pattern                    | [Guarda](https://youtu.be/uhfUYHX0iN8) |
+| 07       | Addio Primitive Obsession con Value Objects e Aggregates | [Guarda](https://www.youtube.com/watch?v=ox4obH0x2YU) |
 
 🔔 **[Iscriviti al mio canale YouTube](https://www.youtube.com/@GiuseppeMaccario)** per altri tutorial su PHP 8 e altro ancora!
 
@@ -40,7 +41,28 @@ Questo repository accompagna la mia serie completa di tutorial su YouTube:
 
 ## 🚀 Quick Start
 
-**Requisiti:** Solo Docker. Non serve PHP installato localmente.
+**Requisiti**: PHP 8.4+ e Composer. In alternativa, puoi usare Docker.
+
+### Opzione 1: PHP Locale (come nei video)
+
+```bash
+# Clona il repository
+git clone https://github.com/gmaccario/parking-lot-kata
+cd parking-lot-kata
+
+# Scegli un episodio, per esempio:
+cd episodes/04-dependency-injection
+
+# Installa le dipendenze
+composer install
+
+# Esegui i test
+./vendor/bin/phpunit
+
+# Leggi il file README dell'episodio specifico 
+# Esegui specifici comandi
+```
+### Opzione 2: Docker
 
 ```bash
 # Clona il repository
@@ -53,17 +75,17 @@ make up
 # Entra nel container
 make shell
 
-# Scegli un episodio
+# Scegli un episodio, per esempio:
 cd episodes/04-dependency-injection
 
 # Installa le dipendenze
 composer install
 
-# Leggi il file README dell'episodio specifico 
-# Esegui specifici comandi
-
 # Esegui i test
 ./vendor/bin/phpunit
+
+# Leggi il file README dell'episodio specifico 
+# Esegui specifici comandi
 ```
 
 **Comandi disponibili:**

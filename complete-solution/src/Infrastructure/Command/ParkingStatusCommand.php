@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Application\Command;
+namespace App\Infrastructure\Command;
 
-use App\Domain\Entity\ParkingGarage;
+use App\Domain\Aggregate\ParkingGarage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

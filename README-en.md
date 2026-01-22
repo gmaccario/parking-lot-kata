@@ -15,13 +15,14 @@
 This repository accompanies my complete YouTube tutorial series:
 
 | Episodio | Argomento                                                          | Video                                  |
-|----------|--------------------------------------------------------------------|----------------------------------------|
+|----|--------------------------------------------------------------------|----------------------------------------|
 | 01 | Introduction & Clean Code Basics                                   | [Watch](https://youtu.be/2vNkzn3NmtQ)  |
 | 02 | Unit Test, Refactoring, Quality Tools                              | [Watch](https://youtu.be/oPCxWAiHyxg) |
 | 03 | Symfony Console Integration                                        | [Watch](https://youtu.be/uqCo_pUl9Dg) |
 | 04 | Dependency Injection in pure PHP                                   | [Watch](https://youtu.be/ZNI3K5WfNPo) |
 | 05 | Strategy Pattern: Refactoring from If-Else to Design Pattern Clean | [Watch](https://youtu.be/msoG82vf_1k) |
 | 06 | Hexagonal Architecture and Factory Pattern                         | [Watch](https://youtu.be/uhfUYHX0iN8) |
+| 07 | Eliminating Primitive Obsession with Value Objects and Aggregates  | [Watch](https://www.youtube.com/watch?v=ox4obH0x2YU) |
 
 🔔 **[Subscribe to my YouTube channel](https://www.youtube.com/@GiuseppeMaccario)** for more PHP architecture tutorials
 
@@ -40,8 +41,29 @@ This repository accompanies my complete YouTube tutorial series:
 
 ## 🚀 Quick Start
 
-**Requirements:** Docker only. No local PHP installation needed.
+**Requirements**: PHP 8.4+ and Composer. Alternatively, you can use Docker.
 
+### Option 1: Local PHP (as shown in the videos)
+
+```bash
+# Clone the repository
+git clone https://github.com/gmaccario/parking-lot-kata
+cd parking-lot-kata
+
+# Choose an episode
+cd episodes/04-dependency-injection
+
+# Install dependencies
+composer install
+
+# Run tests
+./vendor/bin/phpunit
+
+# Read the specific episode's README file
+# Run the specific commands
+```
+
+### Option 2: Docker
 ```bash
 # Clone the repository
 git clone https://github.com/gmaccario/parking-lot-kata
@@ -59,11 +81,11 @@ cd episodes/04-dependency-injection
 # Install dependencies
 composer install
 
-# Read the README file of the specific episode 
-# Run specific commands
-
 # Run tests
 ./vendor/bin/phpunit
+
+# Read the specific episode's README file
+# Run the specific commands
 ```
 
 **Available commands:**

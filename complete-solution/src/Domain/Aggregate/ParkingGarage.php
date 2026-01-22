@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Domain\Entity;
+namespace App\Domain\Aggregate;
 
+use App\Domain\Entity\ParkingFloor;
+use App\Domain\Entity\Van;
 use App\Domain\Enum\FloorLevelEnum;
 use App\Domain\Exception\NoSpaceForVanInTheGroundFloorException;
 use App\Domain\Exception\NoSpaceInTheGarageException;
 use App\Domain\Interface\SizableInterface;
+use App\Domain\VO\OperatingHours;
 
 readonly class ParkingGarage
 {
@@ -14,8 +17,7 @@ readonly class ParkingGarage
      */
     public function __construct(
         private array $floors = [],
-        protected int $openingHour = 9,
-        protected int $closingHour = 23,
+        private OperatingHours $operatingHours = new OperatingHours(9, 23),
     ) {
     }
 
@@ -65,19 +67,6 @@ readonly class ParkingGarage
 
     public function isOpen(?\DateTimeInterface $datetime = null): bool
     {
-        $datetime = $datetime ?? new \DateTime();
-        $hour = (int) $datetime->format('H');
-
-        return $hour >= $this->openingHour && $hour < $this->closingHour;
-    }
-
-    public function getOpeningHour(): int
-    {
-        return $this->openingHour;
-    }
-
-    public function getClosingHour(): int
-    {
-        return $this->closingHour;
+        return $this->operatingHours->isOpenAt($datetime);
     }
 }

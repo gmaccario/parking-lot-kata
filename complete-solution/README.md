@@ -1,105 +1,178 @@
-# 🏁 Soluzione Completa
+# Episodio 07: Value Objects, Aggregates e Fix del Layer
 
 🇬🇧 [English version](README-en.md)
 
-Questa è l'implementazione finale della Parking Lot Kata con tutti i pattern e i principi architetturali applicati.
+## 📺 Guarda il Video
+
+[Link al video YouTube](https://youtu.be/ox4obH0x2YU)
 
 ---
 
-## ⚠️ Nota Importante
+## 🎯 Cosa Imparerai
 
-Se stai imparando, **non partire da qui**.
-
-Questa soluzione completa ha senso solo dopo aver compreso il percorso che ci ha portato qui. Ogni scelta architetturale ha una motivazione che viene spiegata nei singoli episodi.
-
-👉 **Inizia da:** [`/episodes/01-basic-implementation`](../episodes/01-basic-implementation/)
-
----
-
-## 📺 Serie Video Completa
-
-| Episodio | Argomento                                                        | Video |
-|----------|------------------------------------------------------------------|-------|
-| 01 | Introduzione & Clean Code Basics                                 | [Guarda](https://youtu.be/2vNkzn3NmtQ) |
-| 02 | Unit Test, Refactoring, Quality Tools                            | [Guarda](https://youtu.be/oPCxWAiHyxg) |
-| 03 | Integrazione Symfony Console                                     | [Guarda](https://youtu.be/uqCo_pUl9Dg) |
-| 04 | Dependency Injection in PHP Puro                                 | [Guarda](https://youtu.be/ZNI3K5WfNPo) |
-| 05 | Strategy Pattern: Refactoring da If-Else a Design Pattern Clean  | [Guarda](https://youtu.be/msoG82vf_1k) |
-| 06 | Hexagonal Architecture e Factory Pattern                         | [Guarda](https://youtu.be/uhfUYHX0iN8) |
+- Cos'è la Primitive Obsession e perché è un code smell
+- Value Objects: oggetti immutabili con validazione incorporata
+- Differenza tra Entity e Value Object
+- Aggregates e Aggregate Root nel DDD
+- Correzione architetturale: Commands da Application a Infrastructure
 
 ---
 
-## 🎯 Cosa Include Questa Soluzione
+## 🔑 Concetti Chiave
 
-- **Domain-Driven Design e Hexagonal Architecture** — Separazione netta tra dominio, applicazione e infrastruttura
-- **Strategy Pattern** — Parsing flessibile senza catene di if-else
-- **Factory Pattern** — Creazione di oggetti disaccoppiata
-- **Dependency Injection** — Nessuna dipendenza hardcoded
-- **Test completi** — Unit test e integration test con PHPUnit
-- **Symfony Console** — Interfaccia CLI pronta all'uso
+### Primitive Obsession
 
----
+Il code smell che risolviamo in questo episodio: usare tipi primitivi (`int`, `string`, `float`) per rappresentare concetti di dominio.
 
-## 🚀 Quick Start
+**❌ Prima (primitivi separati):**
+```php
+class ParkingGarage
+{
+    public function __construct(
+        private int $openingHour,  // Che senso ha senza closingHour?
+        private int $closingHour,
+    ) {}
+}
+```
 
-```bash
-# Installa le dipendenze
-composer install
-
-# Esegui i test
-./vendor/bin/phpunit
-
-# Esegui l'applicazione
-php bin/console app:parking-status
-php bin/console app:smart-parking-system 
-php bin/console app:parking-import-reservations ./data/parking-reservations.csv
-php bin/console app:parking-import-reservations ./data/parking-reservations.txt
-php bin/console app:parking-import-reservations ./data/parking-reservations.json
-php bin/console app:parking-import-reservations ./data/parking-reservations.xml
+**✅ Dopo (Value Object):**
+```php
+class ParkingGarage
+{
+    public function __construct(
+        private OperatingHours $operatingHours,
+    ) {}
+}
 ```
 
 ---
 
-## 📂 Struttura
+### Value Objects
 
-```
-complete-solution/
-│
-├── src/
-│   ├── Domain/
-│   │   ├── Entity/
-│   │   ├── Enum/
-│   │   ├── Exception/
-│   │   └── Interfaces/
-│   │
-│   ├── Application/
-│   │   ├── Command/
-│   │   ├── Parser/
-│   │   └── UseCase/
-│   │
-│   └── Infrastructure/
-│       └── Parser/
-│
-├── tests/
-│   └── Unit/
-│
-├── bin/
-│   └── console
-│
-├── data/
-│   └── csv/json/txt/xml
-│
-├── doc/
-│   └── IT-Requirements.pdf
-│
-├── README.md
-└── composer.json
+Caratteristiche principali:
+
+| Proprietà | Descrizione |
+|-----------|-------------|
+| **No Identity** | Non hanno ID, conta solo il valore |
+| **Immutabili** | Una volta creati, non cambiano |
+| **Self-validating** | Validazione nel costruttore |
+| **Encapsulation** | Raggruppano dati correlati |
+
+```php
+final readonly class OperatingHours
+{
+    public function __construct(
+        public int $openingHour,
+        public int $closingHour,
+    ) {
+        if ($openingHour < 0 || $openingHour > 23) {
+            throw new InvalidHourException();
+        }
+        if ($closingHour < 0 || $closingHour > 23) {
+            throw new InvalidHourException();
+        }
+        if ($openingHour >= $closingHour) {
+            throw new InvalidOperatingHoursException();
+        }
+    }
+
+    public function isOpen(DateTimeInterface $dateTime): bool
+    {
+        $hour = (int) $dateTime->format('G');
+        return $hour >= $this->openingHour && $hour < $this->closingHour;
+    }
+}
 ```
 
 ---
 
-## 📬 Contatti
+### Entity vs Value Object
 
-- **YouTube:** [Giuseppe Maccario](https://www.youtube.com/@GiuseppeMaccario)
-- **Website:** [giuseppemaccario.com](https://www.giuseppemaccario.com)
-- **LinkedIn:** [Connettiti con me](https://www.linkedin.com/in/giuseppemaccario/)
+| Entity | Value Object |
+|--------|--------------|
+| Ha un ID univoco | Nessun ID |
+| Mutabile | Immutabile |
+| Identità conta | Valore conta |
+| Es: `Car #1`, `Car #2` | Es: `OperatingHours(9, 18)` |
+
+---
+
+### Aggregates
+
+Il `ParkingGarage` è un **Aggregate Root** perché:
+
+1. È il punto d'ingresso per le operazioni (`park()`)
+2. Conosce le regole di business (es: van solo al piano terra)
+3. Gestisce la consistenza tra le sue entità interne (floors)
+
+```php
+// ✅ Corretto: chiedi al Garage
+$garage->park($vehicle);
+
+// ❌ Sbagliato: bypassare l'Aggregate Root
+$floor->park($vehicle);
+```
+
+---
+
+### Fix Architetturale
+
+I **Symfony Console Commands** appartengono a **Infrastructure**, non Application:
+
+```
+Domain/          → Nessuna dipendenza esterna
+Application/     → Solo interfacce (Ports) e Use Cases
+Infrastructure/  → Commands, Controllers, DB adapters
+```
+
+I Commands hanno dipendenze verso `symfony/console` → Infrastructure layer.
+
+---
+
+## 📂 Struttura File
+
+```
+src/
+├── Domain/
+│   ├── Aggregate/
+│   │   └── ParkingGarage.php       ← Aggregate Root
+│   ├── Entity/
+│   │   ├── Car.php
+│   │   ├── Van.php
+│   │   ├── Motorcycle.php
+│   │   └── ParkingFloor.php
+│   ├── VO/
+│   │   ├── OperatingHours.php      ← NEW
+│   │   ├── Capacity.php            ← NEW
+│   │   └── OccupiedSpace.php       ← NEW
+│   ├── Enum/
+│   └── Exception/
+│       ├── InvalidHourException.php
+│       └── InvalidOperatingHoursException.php
+│
+├── Application/
+│   └── UseCase/
+│
+└── Infrastructure/
+    └── Command/                     ← MOVED from Application
+        ├── ParkingStatusCommand.php
+        └── SmartParkingSystemCommand.php
+```
+
+---
+
+## 💡 Value Objects Creati
+
+| Value Object | Sostituisce | Validazione |
+|--------------|-------------|-------------|
+| `OperatingHours` | `openingHour` + `closingHour` | Ore 0-23, opening < closing |
+| `Capacity` | `float $capacity` | Deve essere > 0 |
+| `OccupiedSpace` | `float $occupiedSpace` | Deve essere ≥ 0 |
+
+---
+
+## ➡️ Navigazione
+
+- [← Episodio 06: Hexagonal Architecture & Factory Pattern](../06-hexagonal-architecture/)
+- [↑ Torna al README principale](../../README.md)
+- [→ Episodio 08: Coming soon...]

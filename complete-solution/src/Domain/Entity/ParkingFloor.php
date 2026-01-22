@@ -2,19 +2,16 @@
 
 namespace App\Domain\Entity;
 
-use App\Domain\Exception\NegativeCapacityNotAllowedException;
 use App\Domain\Interface\SizableInterface;
+use App\Domain\VO\Capacity;
+use App\Domain\VO\OccupiedSpace;
 
 class ParkingFloor
 {
     public function __construct(
-        private readonly float $capacity = 0.0,
-        private float $occupiedSpace = 0.0,
-    ) {
-        if ($this->capacity < 0) {
-            throw new NegativeCapacityNotAllowedException();
-        }
-    }
+        private readonly Capacity $capacity = new Capacity(0.0),
+        private OccupiedSpace $occupiedSpace = new OccupiedSpace(0.0),
+    ) {}
 
     public function hasSpaceFor(SizableInterface $item): bool
     {
@@ -24,7 +21,7 @@ class ParkingFloor
     public function park(SizableInterface $item): bool
     {
         if ($this->hasSpaceFor($item)) {
-            $this->occupiedSpace += $item->size();
+            $this->occupiedSpace = $this->occupiedSpace->add($item->size());
 
             return true;
         }
@@ -34,6 +31,6 @@ class ParkingFloor
 
     private function availableSpace(): float
     {
-        return $this->capacity - $this->occupiedSpace;
+        return $this->capacity->value() - $this->occupiedSpace->value();
     }
 }

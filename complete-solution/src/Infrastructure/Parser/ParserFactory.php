@@ -20,11 +20,9 @@ class ParserFactory implements ParserFactoryInterface
 
         $strategyClassName = self::EXTENSION_MAP[$extension] ?? null;
 
-        if ($strategyClassName === null) {
-            throw new \InvalidArgumentException(
-                sprintf('Unsupported file format: %s', $extension)
-            );
-        };
+        if (null === $strategyClassName) {
+            throw new \InvalidArgumentException(sprintf('Unsupported file format: %s', $extension));
+        }
 
         return new $strategyClassName();
     }

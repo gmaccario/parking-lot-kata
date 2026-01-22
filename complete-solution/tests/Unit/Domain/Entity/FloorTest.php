@@ -6,6 +6,9 @@ use App\Domain\Entity\Car;
 use App\Domain\Entity\Motorcycle;
 use App\Domain\Entity\ParkingFloor;
 use App\Domain\Exception\NegativeCapacityNotAllowedException;
+use App\Domain\Exception\NegativeOccupiedSpaceNotAllowedException;
+use App\Domain\VO\Capacity;
+use App\Domain\VO\OccupiedSpace;
 use PHPUnit\Framework\TestCase;
 
 class FloorTest extends TestCase
@@ -19,7 +22,7 @@ class FloorTest extends TestCase
 
     public function testFloorCanBeCreatedWithCapacity(): void
     {
-        $floor = new ParkingFloor(5.0);
+        $floor = new ParkingFloor(new Capacity(5.0));
 
         $this->assertInstanceOf(ParkingFloor::class, $floor);
     }
@@ -28,19 +31,26 @@ class FloorTest extends TestCase
     {
         $this->expectException(NegativeCapacityNotAllowedException::class);
 
-        new ParkingFloor(-5.0);
+        new ParkingFloor(new Capacity(-5.0));
+    }
+
+    public function testFloorCanBeCreatedWithNegativeOccupiedSpace(): void
+    {
+        $this->expectException(NegativeOccupiedSpaceNotAllowedException::class);
+
+        new ParkingFloor(new Capacity(5.0), new OccupiedSpace(-2.0));
     }
 
     public function testFloorCanBeCreatedWithCapacityAndCurrentLoad(): void
     {
-        $floor = new ParkingFloor(5.0, 2.0);
+        $floor = new ParkingFloor(new Capacity(5.0), new OccupiedSpace(2.0));
 
         $this->assertInstanceOf(ParkingFloor::class, $floor);
     }
 
     public function testHasSpaceReturnsTrueWhenThereIsSpace(): void
     {
-        $floor = new ParkingFloor(5.0);
+        $floor = new ParkingFloor(new Capacity(5.0));
         $car = new Car();
 
         $this->assertTrue($floor->hasSpaceFor($car));
@@ -48,7 +58,7 @@ class FloorTest extends TestCase
 
     public function testHasSpaceReturnsFalseWhenThereIsNoSpace(): void
     {
-        $floor = new ParkingFloor(0.5);
+        $floor = new ParkingFloor(new Capacity(0.5));
         $car = new Car();
 
         $this->assertFalse($floor->hasSpaceFor($car));
@@ -56,7 +66,7 @@ class FloorTest extends TestCase
 
     public function testHasSpaceReturnsTrueWhenItemFitsExactly(): void
     {
-        $floor = new ParkingFloor(1.0);
+        $floor = new ParkingFloor(new Capacity(1.0));
         $car = new Car();
 
         $this->assertTrue($floor->hasSpaceFor($car));
@@ -64,7 +74,7 @@ class FloorTest extends TestCase
 
     public function testParkUpdatesCurrentLoad(): void
     {
-        $floor = new ParkingFloor(5.0);
+        $floor = new ParkingFloor(new Capacity(5.0));
         $car = new Car();
 
         // Verify there's space before parking

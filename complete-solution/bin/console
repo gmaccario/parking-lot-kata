@@ -2,10 +2,10 @@
 <?php
 declare(strict_types=1);
 
-use App\Application\Command\ParkingImportReservationsCommand;
-use App\Application\Command\ParkingStatusCommand;
-use App\Application\Command\SmartParkingSystemCommand;
-use App\Domain\Entity\ParkingGarage;
+use App\Domain\Aggregate\ParkingGarage;
+use App\Infrastructure\Command\ParkingImportReservationsCommand;
+use App\Infrastructure\Command\ParkingStatusCommand;
+use App\Infrastructure\Command\SmartParkingSystemCommand;
 use App\Infrastructure\Parser\ParserFactory;
 use Symfony\Component\Console\Application;
 

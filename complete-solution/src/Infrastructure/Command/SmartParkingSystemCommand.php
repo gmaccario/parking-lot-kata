@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Application\Command;
+namespace App\Infrastructure\Command;
 
+use App\Domain\Aggregate\ParkingGarage;
 use App\Domain\Entity\Car;
 use App\Domain\Entity\Motorcycle;
 use App\Domain\Entity\ParkingFloor;
-use App\Domain\Entity\ParkingGarage;
 use App\Domain\Entity\Van;
 use App\Domain\Enum\FloorLevelEnum;
+use App\Domain\VO\Capacity;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,9 +27,9 @@ class SmartParkingSystemCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(2.0),
-            FloorLevelEnum::FIRST->value => new ParkingFloor(6.0),
-            FloorLevelEnum::SECOND->value => new ParkingFloor(10.0),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(capacity: 2.0)),
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(capacity: 6.0)),
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(capacity: 10.0)),
         ];
 
         $garage = new ParkingGarage($floors);

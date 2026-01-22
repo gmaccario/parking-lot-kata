@@ -2,24 +2,27 @@
 
 namespace Tests\Unit\Domain\Entity;
 
+use App\Domain\Aggregate\ParkingGarage;
 use App\Domain\Entity\Car;
 use App\Domain\Entity\Motorcycle;
 use App\Domain\Entity\ParkingFloor;
-use App\Domain\Entity\ParkingGarage;
 use App\Domain\Entity\Van;
 use App\Domain\Enum\FloorLevelEnum;
 use App\Domain\Exception\NoSpaceForVanInTheGroundFloorException;
 use App\Domain\Exception\NoSpaceInTheGarageException;
+use App\Domain\VO\Capacity;
+use App\Domain\VO\OperatingHours;
 use PHPUnit\Framework\TestCase;
 
 class GarageTest extends TestCase
 {
     private ParkingGarage $parkingGarage;
+
     public function setUp(): void
     {
         $this->parkingGarage = new ParkingGarage();
     }
-    
+
     public function testGarageCanBeCreatedWithDefaultFloors(): void
     {
         $garage = new ParkingGarage();
@@ -30,9 +33,9 @@ class GarageTest extends TestCase
     public function testGarageCanBeCreatedWithFloors(): void
     {
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(2.0),
-            FloorLevelEnum::FIRST->value => new ParkingFloor(6.0),
-            FloorLevelEnum::SECOND->value => new ParkingFloor(10.0),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(2.0)),
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(6.0)),
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(10.0)),
         ];
 
         $garage = new ParkingGarage($floors);
@@ -43,9 +46,9 @@ class GarageTest extends TestCase
     public function testParkCarInFirstAvailableFloor(): void
     {
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(2.0),
-            FloorLevelEnum::FIRST->value => new ParkingFloor(6.0),
-            FloorLevelEnum::SECOND->value => new ParkingFloor(10.0),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(2.0)),
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(6.0)),
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(10.0)),
         ];
 
         $garage = new ParkingGarage($floors);
@@ -60,9 +63,9 @@ class GarageTest extends TestCase
     public function testParkMotorcycleInFirstAvailableFloor(): void
     {
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(2.0),
-            FloorLevelEnum::FIRST->value => new ParkingFloor(6.0),
-            FloorLevelEnum::SECOND->value => new ParkingFloor(10.0),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(2.0)),
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(6.0)),
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(10.0)),
         ];
 
         $garage = new ParkingGarage($floors);
@@ -77,9 +80,9 @@ class GarageTest extends TestCase
     public function testParkVanInGroundFloorOnly(): void
     {
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(5.0),
-            FloorLevelEnum::FIRST->value => new ParkingFloor(6.0),
-            FloorLevelEnum::SECOND->value => new ParkingFloor(10.0),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(5.0)),
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(6.0)),
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(10.0)),
         ];
 
         $garage = new ParkingGarage($floors);
@@ -97,9 +100,9 @@ class GarageTest extends TestCase
     public function testParkVanThrowsExceptionWhenGroundFloorIsFull(): void
     {
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(1.0), // Too small for a van
-            FloorLevelEnum::FIRST->value => new ParkingFloor(6.0),
-            FloorLevelEnum::SECOND->value => new ParkingFloor(10.0),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(1.0)), // Too small for a van
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(6.0)),
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(10.0)),
         ];
 
         $garage = new ParkingGarage($floors);
@@ -117,9 +120,9 @@ class GarageTest extends TestCase
     public function testParkCarInSecondFloorWhenFirstFloorsAreFull(): void
     {
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(0.5), // Too small for a car
-            FloorLevelEnum::FIRST->value => new ParkingFloor(0.8),  // Too small for a car
-            FloorLevelEnum::SECOND->value => new ParkingFloor(10.0),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(0.5)), // Too small for a car
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(0.8)),  // Too small for a car
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(10.0)),
         ];
 
         $garage = new ParkingGarage($floors);
@@ -137,9 +140,9 @@ class GarageTest extends TestCase
     public function testParkThrowsExceptionWhenNoSpaceInGarage(): void
     {
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(0.5),
-            FloorLevelEnum::FIRST->value => new ParkingFloor(0.8),
-            FloorLevelEnum::SECOND->value => new ParkingFloor(0.9),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(0.5)),
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(0.8)),
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(0.9)),
         ];
 
         $garage = new ParkingGarage($floors);
@@ -153,9 +156,9 @@ class GarageTest extends TestCase
     public function testParkMultipleVehiclesInOrder(): void
     {
         $floors = [
-            FloorLevelEnum::GROUND->value => new ParkingFloor(3.0),
-            FloorLevelEnum::FIRST->value => new ParkingFloor(6.0),
-            FloorLevelEnum::SECOND->value => new ParkingFloor(10.0),
+            FloorLevelEnum::GROUND->value => new ParkingFloor(new Capacity(3.0)),
+            FloorLevelEnum::FIRST->value => new ParkingFloor(new Capacity(6.0)),
+            FloorLevelEnum::SECOND->value => new ParkingFloor(new Capacity(10.0)),
         ];
 
         $garage = new ParkingGarage($floors);
@@ -225,21 +228,11 @@ class GarageTest extends TestCase
 
     public function testCustomOpeningHours(): void
     {
-        $garage = new ParkingGarage([], 8, 20);
+        $garage = new ParkingGarage([], new OperatingHours(8, 20));
 
         $this->assertTrue($garage->isOpen(new \DateTime('2024-01-15 08:00:00')));
         $this->assertTrue($garage->isOpen(new \DateTime('2024-01-15 19:59:59')));
         $this->assertFalse($garage->isOpen(new \DateTime('2024-01-15 20:00:00')));
         $this->assertFalse($garage->isOpen(new \DateTime('2024-01-15 07:59:59')));
-    }
-
-    public function testGetOpeningHour(): void
-    {
-        $this->assertEquals(9, $this->parkingGarage->getOpeningHour());
-    }
-
-    public function testGetClosingHour(): void
-    {
-        $this->assertEquals(23, $this->parkingGarage->getClosingHour());
     }
 }

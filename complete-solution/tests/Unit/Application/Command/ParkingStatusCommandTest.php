@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Application\Command;
 
-use App\Application\Command\ParkingStatusCommand;
-use App\Domain\Entity\ParkingGarage;
+use App\Domain\Aggregate\ParkingGarage;
+use App\Infrastructure\Command\ParkingStatusCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
