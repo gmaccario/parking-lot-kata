@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reservations>
+    <reservation>
+        <id>1</id>
+        <plate>CC123CF</plate>
+        <start_time>2025-10-11 09:00</start_time>
+        <end_time>2025-10-11 12:00</end_time>
+        <spot>A7</spot>
+    </reservation>
+    <reservation>
+        <id>2</id>
+        <plate>EF456GH</plate>
+        <start_time>2025-10-11 10:30</start_time>
+        <end_time>2025-10-11 14:00</end_time>
+        <spot>B5</spot>
+    </reservation>
+    <reservation>
+        <id>3</id>
+        <plate>IJ789KL</plate>
+        <start_time>2025-10-11 13:00</start_time>
+        <end_time>2025-10-11 17:00</end_time>
+        <spot>C2</spot>
+    </reservation>
+</reservations>
